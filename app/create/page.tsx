@@ -11,7 +11,8 @@ import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { WalletConnect } from '../../components/WalletConnect';
 import { MetadataInput } from '../../components/MetadataInput';
 import { useWallet } from '../../hooks/useWallet';
-// Remove AfterMint import - using hardcoded rewards
+import { RewardModal } from '../../components/RewardModal';
+import { walrusAPI } from '../../lib/walrus-api';
 import { mintGhibliNFT, setupCollection, checkCollection } from '../../lib/flow-transactions';
 
 type AppState = 'wallet' | 'upload' | 'loading' | 'transform' | 'metadata' | 'mint' | 'success';
@@ -32,51 +33,10 @@ export default function CreatePage() {
   const [showMintingProgress, setShowMintingProgress] = useState(false);
   const [mintingError, setMintingError] = useState<string>('');
   const [transactionId, setTransactionId] = useState<string>('');
+  const [showRewardModal, setShowRewardModal] = useState(false);
+  const [rewardModalData, setRewardModalData] = useState<any>(null);
 
   const { isConnected, address } = useWallet();
-  // Hardcoded reward modal function
-  const showHardcodedRewardModal = (nftData: any) => {
-    const modal = document.createElement('div');
-    modal.innerHTML = `
-      <div style="
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.8); display: flex; align-items: center;
-        justify-content: center; z-index: 10000; font-family: system-ui;
-      ">
-        <div style="
-          background: white; padding: 2rem; border-radius: 1rem;
-          text-align: center; max-width: 500px; margin: 1rem;
-        ">
-          <h2 style="margin: 0 0 1rem 0; color: #059669;">🎉 NFT Minted Successfully!</h2>
-          <img src="${nftData.image}" alt="NFT" style="width: 200px; height: 200px; object-fit: cover; border-radius: 0.5rem; margin-bottom: 1rem;">
-          <h3 style="margin: 0 0 0.5rem 0;">${nftData.nftName}</h3>
-          <p style="margin: 0 0 1.5rem 0; color: #6b7280;">by ${nftData.creator}</p>
-          
-          <div style="background: #f3f4f6; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
-            <h4 style="margin: 0 0 0.5rem 0; color: #059669;">🎁 Exclusive Rewards Unlocked!</h4>
-            <ul style="text-align: left; margin: 0; padding-left: 1rem;">
-              <li>🏷️ 10% off Ghibli merchandise</li>
-              <li>🖼️ Exclusive wallpaper collection</li>
-              <li>🎨 5 bonus transformation credits</li>
-              <li>📦 Free physical print (limited time)</li>
-            </ul>
-          </div>
-          
-          <div style="display: flex; gap: 0.5rem;">
-            <button onclick="window.open('https://flowscan.org/transaction/${nftData.transactionId}', '_blank')" 
-              style="flex: 1; background: #059669; color: white; border: none; padding: 0.75rem; border-radius: 0.5rem; cursor: pointer;">
-              View Transaction
-            </button>
-            <button onclick="this.parentElement.parentElement.parentElement.remove()" 
-              style="flex: 1; background: #6b7280; color: white; border: none; padding: 0.75rem; border-radius: 0.5rem; cursor: pointer;">
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-  };
 
   const handleWalletConnected = () => {
     setCurrentState('upload');
@@ -129,25 +89,56 @@ export default function CreatePage() {
     setMintingError('');
 
     try {
-      // Check if user has collection setup
+      // Step 1: Upload transformed image to Walrus IPFS
+      console.log('📤 Uploading image to Walrus IPFS...');
+      const imageBlob = await fetch(transformedImage).then(r => r.blob());
+      const imageFile = new File([imageBlob], `${metadata.name}.jpg`, { type: 'image/jpeg' });
+      
+      const imageUpload = await walrusAPI.uploadImage(imageFile);
+      if (!imageUpload.success) {
+        throw new Error('Failed to upload image to IPFS: ' + imageUpload.error);
+      }
+
+      // Step 2: Create and upload metadata JSON to Walrus IPFS
+      console.log('📝 Uploading metadata to Walrus IPFS...');
+      const nftMetadataJson = {
+        name: metadata.name,
+        description: metadata.description,
+        image: imageUpload.url,
+        creator: metadata.creator,
+        attributes: [
+          { trait_type: "Style", value: "Studio Ghibli" },
+          { trait_type: "Creator", value: metadata.creator },
+          { trait_type: "Transformation", value: "AI Generated" }
+        ],
+        external_url: window.location.origin,
+        created_at: new Date().toISOString()
+      };
+
+      const metadataUpload = await walrusAPI.uploadJSON(nftMetadataJson);
+      if (!metadataUpload.success) {
+        throw new Error('Failed to upload metadata to IPFS: ' + metadataUpload.error);
+      }
+
+      // Step 3: Check if user has collection setup
       const hasCollection = await checkCollection(address!);
       
       if (!hasCollection) {
-        console.log('Setting up collection...');
+        console.log('🔧 Setting up collection...');
         const setupResult = await setupCollection();
         if (!setupResult.success) {
-          throw new Error('Failed to setup collection: ' + (setupResult as any).error);
+          throw new Error('Failed to setup collection: ' + setupResult.error);
         }
       }
 
-      // Mint the NFT
-      console.log('Minting NFT...');
+      // Step 4: Mint the NFT on Flow blockchain
+      console.log('🎨 Minting NFT on Flow blockchain...');
       const mintResult = await mintGhibliNFT(address!, {
         name: metadata.name,
         description: metadata.description,
-        thumbnail: transformedImage,
+        thumbnail: imageUpload.url!,
         originalImage: originalImage,
-        transformedImage: transformedImage,
+        transformedImage: imageUpload.url!,
         creator: metadata.creator,
       });
 
@@ -156,17 +147,16 @@ export default function CreatePage() {
         setShowMintingProgress(false);
         setCurrentState('success');
         
-        // Show hardcoded reward modal
-        setTimeout(() => {
-          showHardcodedRewardModal({
-            nftName: metadata.name,
-            creator: metadata.creator,
-            transactionId: mintResult.transactionId || '',
-            image: transformedImage,
-          });
-        }, 1000);
+        // Show professional reward modal
+        setRewardModalData({
+          name: metadata.name,
+          creator: metadata.creator,
+          image: imageUpload.url,
+          transactionId: mintResult.transactionId || ''
+        });
+        setShowRewardModal(true);
       } else {
-        throw new Error((mintResult as any).error || 'Minting failed');
+        throw new Error(mintResult.error || 'Minting failed');
       }
     } catch (error) {
       console.error('Minting error:', error);
@@ -376,6 +366,15 @@ export default function CreatePage() {
         <div className="absolute bottom-1/4 right-10 w-40 h-40 bg-teal-200 rounded-full opacity-10 blur-3xl" />
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-100 to-teal-100 rounded-full opacity-5 blur-3xl" />
       </div>
+
+      {/* Professional Reward Modal */}
+      {rewardModalData && (
+        <RewardModal
+          isOpen={showRewardModal}
+          onClose={() => setShowRewardModal(false)}
+          nftData={rewardModalData}
+        />
+      )}
     </div>
   );
 }

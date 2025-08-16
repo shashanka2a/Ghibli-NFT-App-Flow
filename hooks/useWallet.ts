@@ -1,15 +1,26 @@
 'use client'
 
-import { useMockWallet } from '../components/providers/WalletProvider'
+import { useDynamicContext } from '@dynamic-labs/sdk-react-core'
 
 export function useWallet() {
-  const mockWallet = useMockWallet()
+  const { primaryWallet, user, setShowAuthFlow } = useDynamicContext()
+  
+  const connect = () => {
+    setShowAuthFlow(true)
+  }
+  
+  const disconnect = async () => {
+    if (primaryWallet) {
+      await primaryWallet.disconnect()
+    }
+  }
   
   return {
-    isConnected: mockWallet.isConnected,
-    address: mockWallet.address,
-    user: mockWallet.isConnected ? { addr: mockWallet.address, loggedIn: true } : null,
-    connect: mockWallet.connect,
-    disconnect: mockWallet.disconnect,
+    isConnected: !!primaryWallet,
+    address: primaryWallet?.address || null,
+    user: user ? { addr: primaryWallet?.address, loggedIn: true } : null,
+    connect,
+    disconnect,
+    wallet: primaryWallet
   }
 }

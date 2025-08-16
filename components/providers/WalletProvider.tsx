@@ -1,51 +1,22 @@
 'use client'
 
-import { ReactNode, createContext, useContext, useState } from 'react'
+import { ReactNode } from 'react'
+import { DynamicContextProvider } from '@dynamic-labs/sdk-react-core'
+import { FlowWalletConnectors } from '@dynamic-labs/flow'
 
 interface WalletProviderProps {
   children: ReactNode
 }
 
-// Mock wallet context for demo (no API keys needed)
-interface MockWalletContext {
-  isConnected: boolean
-  address: string | null
-  connect: () => void
-  disconnect: () => void
-}
-
-const WalletContext = createContext<MockWalletContext>({
-  isConnected: false,
-  address: null,
-  connect: () => {},
-  disconnect: () => {}
-})
-
 export function WalletProvider({ children }: WalletProviderProps) {
-  const [isConnected, setIsConnected] = useState(false)
-  const [address, setAddress] = useState<string | null>(null)
-
-  const connect = () => {
-    // Mock wallet connection
-    setIsConnected(true)
-    setAddress('0x1234567890abcdef') // Mock Flow address
-    console.log('🔗 Mock wallet connected (no API keys needed)')
-  }
-
-  const disconnect = () => {
-    setIsConnected(false)
-    setAddress(null)
-    console.log('🔌 Mock wallet disconnected')
-  }
-
   return (
-    <WalletContext.Provider value={{ isConnected, address, connect, disconnect }}>
+    <DynamicContextProvider
+      settings={{
+        environmentId: process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID || 'live_default',
+        walletConnectors: [FlowWalletConnectors],
+      }}
+    >
       {children}
-    </WalletContext.Provider>
+    </DynamicContextProvider>
   )
-}
-
-// Export hook for components to use
-export function useMockWallet() {
-  return useContext(WalletContext)
 }

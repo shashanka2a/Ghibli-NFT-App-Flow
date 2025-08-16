@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Wallet, ExternalLink, CheckCircle } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
+import { DynamicWidget } from '@dynamic-labs/sdk-react-core';
 
 interface WalletConnectProps {
   onConnected: () => void;
@@ -57,13 +58,9 @@ export function WalletConnect({ onConnected }: WalletConnectProps) {
               transition={{ delay: 0.2 }}
               className="space-y-4"
             >
-              <Button
-                onClick={connect}
-                className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white border-0 rounded-xl text-lg group"
-              >
-                <Wallet className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
-                Connect Wallet
-              </Button>
+              <div className="w-full">
+                <DynamicWidget />
+              </div>
               
               <div className="text-center text-sm text-slate-500">
                 <p>Supported wallets:</p>
