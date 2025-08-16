@@ -2,10 +2,8 @@
 
 import { motion } from 'framer-motion'
 import { Button } from '../components/ui/button'
-import { Card } from '../components/ui/card'
 import { Badge } from '../components/ui/badge'
-import { ImageWithFallback } from '../components/ImageWithFallback'
-import { Upload, Sparkles, Coins, ArrowRight, Star, Zap } from 'lucide-react'
+import { Sparkles, ArrowRight, Zap } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Home() {
