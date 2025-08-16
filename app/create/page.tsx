@@ -136,7 +136,7 @@ export default function CreatePage() {
         console.log('Setting up collection...');
         const setupResult = await setupCollection();
         if (!setupResult.success) {
-          throw new Error('Failed to setup collection: ' + setupResult.error);
+          throw new Error('Failed to setup collection: ' + (setupResult as any).error);
         }
       }
 
@@ -166,11 +166,11 @@ export default function CreatePage() {
           });
         }, 1000);
       } else {
-        throw new Error(mintResult.error || 'Minting failed');
+        throw new Error((mintResult as any).error || 'Minting failed');
       }
     } catch (error) {
       console.error('Minting error:', error);
-      setMintingError(error.message);
+      setMintingError(error instanceof Error ? error.message : 'Unknown error');
       setShowMintingProgress(false);
     }
   };

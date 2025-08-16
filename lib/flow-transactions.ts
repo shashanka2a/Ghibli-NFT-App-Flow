@@ -14,19 +14,26 @@ export async function mintGhibliNFT(
 ) {
   console.log('🎨 Mock NFT minting (no blockchain calls needed)', { recipientAddress, metadata })
   
-  // Simulate minting time
-  await new Promise(resolve => setTimeout(resolve, 2000))
-  
-  // Generate mock transaction ID
-  const mockTransactionId = `0x${Math.random().toString(16).substr(2, 16)}`
-  
-  return { 
-    success: true, 
-    transactionId: mockTransactionId,
-    transaction: {
-      id: mockTransactionId,
-      status: 'sealed',
-      events: []
+  try {
+    // Simulate minting time
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    // Generate mock transaction ID
+    const mockTransactionId = `0x${Math.random().toString(16).substr(2, 16)}`
+    
+    return { 
+      success: true, 
+      transactionId: mockTransactionId,
+      transaction: {
+        id: mockTransactionId,
+        status: 'sealed',
+        events: []
+      }
+    }
+  } catch (error) {
+    return { 
+      success: false, 
+      error: 'Mock minting failed' 
     }
   }
 }
@@ -35,14 +42,21 @@ export async function mintGhibliNFT(
 export async function setupCollection() {
   console.log('🔧 Mock collection setup (no blockchain calls needed)')
   
-  // Simulate setup time
-  await new Promise(resolve => setTimeout(resolve, 500))
-  
-  const mockTransactionId = `0x${Math.random().toString(16).substr(2, 16)}`
-  
-  return { 
-    success: true, 
-    transactionId: mockTransactionId 
+  try {
+    // Simulate setup time
+    await new Promise(resolve => setTimeout(resolve, 500))
+    
+    const mockTransactionId = `0x${Math.random().toString(16).substr(2, 16)}`
+    
+    return { 
+      success: true, 
+      transactionId: mockTransactionId 
+    }
+  } catch (error) {
+    return { 
+      success: false, 
+      error: 'Mock setup failed' 
+    }
   }
 }
 
