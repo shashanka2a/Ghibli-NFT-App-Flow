@@ -14,7 +14,9 @@ export function WalletConnect({ onConnected }: WalletConnectProps) {
   const { isConnected, address, connect, disconnect, user } = useWallet();
 
   React.useEffect(() => {
+    console.log('WalletConnect state:', { isConnected, address, user });
     if (isConnected && address) {
+      console.log('Wallet connected, calling onConnected');
       onConnected();
     }
   }, [isConnected, address, onConnected]);
@@ -51,17 +53,17 @@ export function WalletConnect({ onConnected }: WalletConnectProps) {
             </p>
           </div>
 
-          {!isConnected ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="space-y-4"
-            >
-              <div className="w-full">
-                <DynamicWidget />
-              </div>
-              
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="space-y-4"
+          >
+            <div className="w-full">
+              <DynamicWidget />
+            </div>
+            
+            {!isConnected && (
               <div className="text-center text-sm text-slate-500">
                 <p>Supported wallets:</p>
                 <div className="flex justify-center gap-4 mt-2">
@@ -70,8 +72,9 @@ export function WalletConnect({ onConnected }: WalletConnectProps) {
                   <span className="px-3 py-1 bg-slate-100 rounded-full">Flow Wallet</span>
                 </div>
               </div>
-            </motion.div>
-          ) : (
+            )}
+
+            {isConnected && (
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
