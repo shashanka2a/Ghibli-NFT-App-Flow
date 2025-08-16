@@ -1,5 +1,22 @@
 // Mock Flow transactions for demo (no blockchain calls needed)
 
+interface MintResult {
+  success: boolean;
+  transactionId: string;
+  transaction?: {
+    id: string;
+    status: string;
+    events: any[];
+  };
+  error?: string;
+}
+
+interface SetupResult {
+  success: boolean;
+  transactionId: string;
+  error?: string;
+}
+
 // Mock mint NFT function
 export async function mintGhibliNFT(
   recipientAddress: string,
@@ -11,7 +28,7 @@ export async function mintGhibliNFT(
     transformedImage: string
     creator: string
   }
-) {
+): Promise<MintResult> {
   console.log('🎨 Mock NFT minting (no blockchain calls needed)', { recipientAddress, metadata })
   
   try {
@@ -33,13 +50,14 @@ export async function mintGhibliNFT(
   } catch (error) {
     return { 
       success: false, 
+      transactionId: '',
       error: 'Mock minting failed' 
     }
   }
 }
 
 // Mock setup collection function
-export async function setupCollection() {
+export async function setupCollection(): Promise<SetupResult> {
   console.log('🔧 Mock collection setup (no blockchain calls needed)')
   
   try {
@@ -55,6 +73,7 @@ export async function setupCollection() {
   } catch (error) {
     return { 
       success: false, 
+      transactionId: '',
       error: 'Mock setup failed' 
     }
   }

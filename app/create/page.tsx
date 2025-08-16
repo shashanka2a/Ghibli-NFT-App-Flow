@@ -152,7 +152,7 @@ export default function CreatePage() {
       });
 
       if (mintResult.success) {
-        setTransactionId(mintResult.transactionId);
+        setTransactionId(mintResult.transactionId || '');
         setShowMintingProgress(false);
         setCurrentState('success');
         
@@ -161,7 +161,7 @@ export default function CreatePage() {
           showHardcodedRewardModal({
             nftName: metadata.name,
             creator: metadata.creator,
-            transactionId: mintResult.transactionId,
+            transactionId: mintResult.transactionId || '',
             image: transformedImage,
           });
         }, 1000);
