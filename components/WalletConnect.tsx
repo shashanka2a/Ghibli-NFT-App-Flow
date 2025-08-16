@@ -74,65 +74,65 @@ export function WalletConnect({ onConnected }: WalletConnectProps) {
               </div>
             )}
 
-            {isConnected && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="space-y-6"
-            >
-              {/* Connected Status */}
-              <div className="flex items-center justify-center gap-2 text-emerald-600 bg-emerald-50 p-4 rounded-xl">
-                <CheckCircle className="w-5 h-5" />
-                <span className="font-medium">Wallet Connected</span>
-              </div>
-
-              {/* Wallet Info */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                  <span className="text-slate-600">Address:</span>
-                  <div className="flex items-center gap-2">
-                    <code className="text-sm bg-white px-2 py-1 rounded">
-                      {formatAddress(address || '')}
-                    </code>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => window.open(`https://flowscan.org/account/${address}`, '_blank')}
-                      className="p-1 h-auto"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </Button>
-                  </div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="space-y-6 mt-6"
+              >
+                {/* Connected Status */}
+                <div className="flex items-center justify-center gap-2 text-emerald-600 bg-emerald-50 p-4 rounded-xl">
+                  <CheckCircle className="w-5 h-5" />
+                  <span className="font-medium">Wallet Connected</span>
                 </div>
 
-                {user?.loggedIn && (
+                {/* Wallet Info */}
+                <div className="space-y-3">
                   <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                    <span className="text-slate-600">Status:</span>
-                    <span className="text-emerald-600 font-medium">Authenticated</span>
+                    <span className="text-slate-600">Address:</span>
+                    <div className="flex items-center gap-2">
+                      <code className="text-sm bg-white px-2 py-1 rounded">
+                        {formatAddress(address || '')}
+                      </code>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => window.open(`https://flowscan.org/account/${address}`, '_blank')}
+                        className="p-1 h-auto"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
-                )}
-              </div>
 
-              {/* Action Buttons */}
-              <div className="space-y-3">
-                <Button
-                  onClick={onConnected}
-                  className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white border-0 rounded-xl"
-                >
-                  Continue to Create NFT
-                </Button>
-                
-                <Button
-                  onClick={disconnect}
-                  variant="outline"
-                  className="w-full py-3 rounded-xl border-slate-300 hover:bg-slate-50"
-                >
-                  Disconnect Wallet
-                </Button>
-              </div>
-            </motion.div>
-          )}
+                  {user?.loggedIn && (
+                    <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                      <span className="text-slate-600">Status:</span>
+                      <span className="text-emerald-600 font-medium">Authenticated</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="space-y-3">
+                  <Button
+                    onClick={onConnected}
+                    className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white border-0 rounded-xl"
+                  >
+                    Continue to Create NFT
+                  </Button>
+                  
+                  <Button
+                    onClick={disconnect}
+                    variant="outline"
+                    className="w-full py-3 rounded-xl border-slate-300 hover:bg-slate-50"
+                  >
+                    Disconnect Wallet
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
 
           {/* Security Notice */}
           <motion.div

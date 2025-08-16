@@ -14,6 +14,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
       settings={{
         environmentId: process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID || 'live_default',
         walletConnectors: [FlowWalletConnectors],
+        initialAuthenticationMode: 'connect-only',
       }}
     >
       {children}

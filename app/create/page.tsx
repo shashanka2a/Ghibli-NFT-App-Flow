@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UploadZone } from '../../components/UploadZone';
 import { StepIndicator } from '../../components/StepIndicator';
 import { ImageComparison } from '../../components/ImageComparison';
@@ -36,9 +36,15 @@ export default function CreatePage() {
   const [showRewardModal, setShowRewardModal] = useState(false);
   const [rewardModalData, setRewardModalData] = useState<any>(null);
 
-  const { isConnected, address } = useWallet();
+  const { isConnected, address, wallet } = useWallet();
+
+  // Debug wallet state
+  useEffect(() => {
+    console.log('Create page wallet state:', { isConnected, address, wallet });
+  }, [isConnected, address, wallet]);
 
   const handleWalletConnected = () => {
+    console.log('handleWalletConnected called');
     setCurrentState('upload');
   };
 
