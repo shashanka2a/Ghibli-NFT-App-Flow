@@ -93,7 +93,7 @@ export function WalletConnect({ onConnected }: WalletConnectProps) {
                   <span className="text-slate-600">Address:</span>
                   <div className="flex items-center gap-2">
                     <code className="text-sm bg-white px-2 py-1 rounded">
-                      {formatAddress(address)}
+                      {formatAddress(address || '')}
                     </code>
                     <Button
                       variant="ghost"
