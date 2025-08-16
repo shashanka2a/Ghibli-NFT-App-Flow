@@ -1,0 +1,10 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_FLOW_NETWORK": "testnet",
+    "NEXT_PUBLIC_GHIBLI_NFT_CONTRACT": "0xf8d6e0586b0a20c7"
+  }
+}

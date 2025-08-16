@@ -12,10 +12,10 @@ export function UploadZone({ onImageUpload }: UploadZoneProps) {
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
-    
+
     const files = Array.from(e.dataTransfer.files);
     const imageFile = files.find(file => file.type.startsWith('image/'));
-    
+
     if (imageFile) {
       onImageUpload(imageFile);
     }
@@ -64,8 +64,8 @@ export function UploadZone({ onImageUpload }: UploadZoneProps) {
           transition={{ duration: 0.6, delay: 0.2 }}
           className={`
             relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 max-w-lg mx-auto
-            ${isDragOver 
-              ? 'border-emerald-400 bg-gradient-to-br from-emerald-50 to-teal-50 scale-105' 
+            ${isDragOver
+              ? 'border-emerald-400 bg-gradient-to-br from-emerald-50 to-teal-50 scale-105'
               : 'border-slate-300 bg-gradient-to-br from-slate-50 to-emerald-50 hover:border-emerald-300'
             }
           `}
@@ -74,7 +74,7 @@ export function UploadZone({ onImageUpload }: UploadZoneProps) {
           onDragLeave={handleDragLeave}
         >
           <motion.div
-            animate={{ 
+            animate={{
               y: isDragOver ? -10 : 0,
               scale: isDragOver ? 1.1 : 1
             }}
@@ -90,7 +90,7 @@ export function UploadZone({ onImageUpload }: UploadZoneProps) {
           <h3 className="text-lg mb-2 text-slate-700">
             {isDragOver ? 'Drop your image here' : 'Drag & drop your image'}
           </h3>
-          
+
           <p className="text-slate-500 mb-6">
             or click to browse your files
           </p>
@@ -119,24 +119,24 @@ export function UploadZone({ onImageUpload }: UploadZoneProps) {
         {/* Floating Elements */}
         <motion.div
           className="absolute top-20 left-10 w-3 h-3 bg-emerald-300 rounded-full opacity-60"
-          animate={{ 
+          animate={{
             y: [0, -20, 0],
             scale: [1, 1.2, 1]
           }}
-          transition={{ 
+          transition={{
             duration: 3,
             repeat: Infinity,
             repeatType: "reverse"
           }}
         />
-        
+
         <motion.div
           className="absolute top-32 right-16 w-2 h-2 bg-teal-400 rounded-full opacity-50"
-          animate={{ 
+          animate={{
             y: [0, -15, 0],
             x: [0, 10, 0]
           }}
-          transition={{ 
+          transition={{
             duration: 4,
             repeat: Infinity,
             repeatType: "reverse",
