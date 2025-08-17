@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Share2, User, ExternalLink, Download } from 'lucide-react';
+import { Trophy, Share2, User, ExternalLink, Download, Gift } from 'lucide-react';
 import { ImageWithFallback } from './ImageWithFallback';
 
 interface SuccessScreenProps {
   nftImage: string;
+  nftName?: string;
+  transactionId?: string;
   onViewProfile: () => void;
   onShareNFT: () => void;
+  onShowSponsors?: () => void;
 }
 
-export function SuccessScreen({ nftImage, onViewProfile, onShareNFT }: SuccessScreenProps) {
+export function SuccessScreen({ nftImage, nftName, transactionId, onViewProfile, onShareNFT, onShowSponsors }: SuccessScreenProps) {
   const [showCelebration, setShowCelebration] = useState(true);
 
   useEffect(() => {
@@ -120,13 +123,18 @@ export function SuccessScreen({ nftImage, onViewProfile, onShareNFT }: SuccessSc
               </div>
               
               <div className="space-y-2">
-                <h3 className="text-xl">Ghibli Moment #1337</h3>
+                <h3 className="text-xl">{nftName || 'Ghibli Moment'}</h3>
                 <p className="text-slate-600">Your magical transformation</p>
                 <div className="flex items-center justify-center gap-4 text-sm text-slate-500">
                   <span>Edition 1 of 1</span>
                   <span>•</span>
-                  <span>Blockchain: Ethereum</span>
+                  <span>Blockchain: Flow</span>
                 </div>
+                {transactionId && (
+                  <div className="text-xs text-slate-400 font-mono">
+                    TX: {transactionId.slice(0, 8)}...{transactionId.slice(-6)}
+                  </div>
+                )}
               </div>
 
               {/* Floating sparkles around NFT */}
@@ -213,9 +221,22 @@ export function SuccessScreen({ nftImage, onViewProfile, onShareNFT }: SuccessSc
               <Download className="w-4 h-4" />
               Download
             </button>
-            <button className="flex items-center gap-2 text-slate-600 hover:text-emerald-600 transition-colors">
+            {onShowSponsors && (
+              <button 
+                onClick={onShowSponsors}
+                className="flex items-center gap-2 text-slate-600 hover:text-purple-600 transition-colors"
+              >
+                <Gift className="w-4 h-4" />
+                Flow Offers
+              </button>
+            )}
+            <button 
+              onClick={() => transactionId && window.open(`https://flowscan.io/transaction/${transactionId}`, '_blank')}
+              className="flex items-center gap-2 text-slate-600 hover:text-emerald-600 transition-colors disabled:opacity-50"
+              disabled={!transactionId}
+            >
               <ExternalLink className="w-4 h-4" />
-              View on OpenSea
+              View on FlowScan
             </button>
           </motion.div>
 
